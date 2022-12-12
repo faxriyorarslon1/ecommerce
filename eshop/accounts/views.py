@@ -62,10 +62,11 @@ def customer_login_view(request):
         raise exceptions.AuthenticationFailed(
             'phone number and password required')
     user = CustomUser.objects.filter(phone=phone).last()
+    print(make_password(password))
     if(user is None):
           raise exceptions.AuthenticationFailed('user not found')
-    print(user.username, password)
-    user = authenticate(request, username=user.username, password=password)
+    if (not user.check_password(password)):
+        raise exceptions.AuthenticationFailed('wrong password')
     serialized_user = CustomerLoginSerializer(user).data
     serialized_user.pop('password')
     access_token = generate_access_token(user)

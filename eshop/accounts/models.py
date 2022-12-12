@@ -40,15 +40,15 @@ class CustomUser(AbstractUser):
     status = models.CharField(choices=USER_STATUS_CHOICE, max_length=11)
     created_at = models.DateTimeField(auto_now_add=True)
     role = models.CharField(choices=USER_ROLE_CHOICE, max_length=11)
-    kod = models.IntegerField()
+    kod = models.IntegerField(default=95135)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['phone']
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + " " + self.last_name + str(self.phone)
 
 
 #Customer

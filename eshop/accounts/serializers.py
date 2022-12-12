@@ -31,8 +31,8 @@ class SendCodeSerializer(serializers.Serializer):
             response = requests.request("POST", url, headers=headers, data=payload)
 
             obj, created = UnverifiedUsers.objects.update_or_create(
-                phone=phone, kod=kod,
-                defaults={'phone': phone},
+                phone=phone,
+                defaults={'kod': kod},
             )
             return obj
         else:
@@ -62,18 +62,14 @@ class RegisterCustomerSerializer(serializers.Serializer):
     def create(self, validated_data):
         first_name = validated_data.get('first_name')
         last_name = validated_data.get('last_name')
-        password = make_password(validated_data.get('password'))
-        # city = validated_data.get('city')
-        # city = self.get_city_obj(city)
+        password = validated_data.get('password')
         status = "Active"
         middlename = validated_data.get('middlename')
         phone = validated_data.get('phone')
-        # if not "kod" in validated_data.keys():
-        #     error = {'message':'Registration code field is empty'}
-        #     raise serializers.ValidationError(error)
         kod = validated_data.get("kod")
         try:
-            uu = UnverifiedUsers.objects.get(phone=phone)
+            uu = UnverifiedUsers.objects.filter(phone=phone).first()
+            print(phone, uu)
         except UnverifiedUsers.DoesNotExist:
             uu = None
         if uu is None:
@@ -82,12 +78,10 @@ class RegisterCustomerSerializer(serializers.Serializer):
         if kod == uu.kod:
             user = CustomUser.objects.filter(phone = phone).first()
             if user is None:
-                user= CustomUser.objects.create(first_name=first_name, last_name=last_name, middlename=middlename,
-                                                phone = phone, username=first_name+phone, status = status, kod=kod, role="Customer")
-                user.set_password(password)
-                user.save()
-                customer = Customer.objects.update_or_create(user=user)
-                return customer
+                user= CustomUser.objects.create_user(first_name=first_name, last_name=last_name, middlename=middlename,
+                                                phone = phone, username=first_name+phone, status = status, kod=kod, role="Customer", password=password)
+                customer = Customer.objects.create(user=user)
+                return user
             else:
                 error = {'message':'User already registered'}
                 raise serializers.ValidationError(error)
