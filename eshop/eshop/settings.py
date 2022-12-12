@@ -37,13 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'drf_yasg',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
+
 ]
 
 PROJECT_APPS = [
     'accounts',
     'orders'
 ]
+ 
 
 INSTALLED_APPS += PROJECT_APPS
 
@@ -150,3 +155,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
+
+REFRESH_TOKEN_SECRET="qwaszxfg1358"

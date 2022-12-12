@@ -18,10 +18,10 @@ USER_ROLE_CHOICE =(
 
 class UnverifiedUsers(models.Model):
     phone = PhoneNumberField(null=True, blank=True, unique=True)
-    code = models.IntegerField()
+    kod = models.IntegerField()
     
     def __str__(self) -> str:
-        return str(self.phone) +"###"+ str(self.code)
+        return str(self.phone) +"###"+ str(self.kod)
     
 
 class City(models.Model):
@@ -40,9 +40,10 @@ class CustomUser(AbstractUser):
     status = models.CharField(choices=USER_STATUS_CHOICE, max_length=11)
     created_at = models.DateTimeField(auto_now_add=True)
     role = models.CharField(choices=USER_ROLE_CHOICE, max_length=11)
+    kod = models.IntegerField()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['phone']
 
     objects = CustomUserManager()
 
@@ -53,10 +54,10 @@ class CustomUser(AbstractUser):
 #Customer
 class Customer(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-    discard = models.CharField(max_length=16, verbose_name="Discount karta")
-    debt = models.BigIntegerField(verbose_name="qarzi")
-    ginfo = models.TextField(verbose_name="Umumiy ma'lumot")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    discard = models.CharField(max_length=16, verbose_name="Discount karta", null=True, blank=True)
+    debt = models.BigIntegerField(verbose_name="qarzi", null=True, blank=True)
+    ginfo = models.TextField(verbose_name="Umumiy ma'lumot", null=True)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
